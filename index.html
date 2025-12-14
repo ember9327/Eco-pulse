@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EcoPulse — Sustainability Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#0b1f1a;--mid:#12372a;--card:#164437;--accent:#2ecc71;
+ --text:#e6f4ea;--muted:#bfe8d6;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:var(--bg);color:var(--text);line-height:1.7}
+section{padding:90px 20px}
+.container{max-width:1100px;margin:auto}
+h1{font-size:3.5rem}h2{font-size:2.5rem;margin-bottom:25px}
+p{color:var(--muted)}
+.hero{min-height:100vh;display:flex;align-items:center;background:linear-gradient(rgba(11,31,26,.75),rgba(11,31,26,.75)),url('images/forest-bg.jpg') center/cover}
+.cta{margin-top:30px;padding:14px 38px;border-radius:40px;border:none;background:var(--accent);color:#000;font-size:1.05rem;cursor:pointer}
+.card{background:var(--mid);padding:30px;border-radius:28px}
+.mcq button{width:100%;margin-top:14px;padding:14px;border-radius:20px;border:none;background:#0e2a23;color:var(--text);cursor:pointer}
+.mcq button:hover{background:var(--accent);color:#000}
+.skip-btn{background:#555;color:#fff;margin-top:10px}
+footer{text-align:center;padding:40px;opacity:.7}
+</style>
+</head>
+<body>
+
+<section class="hero">
+ <div class="container">
+  <h1>EcoPulse 🌍</h1>
+  <p>This journey will present you with climate decisions. Your answers remain hidden until the end — only then will you see the impact of your choices.</p>
+  <button class="cta" onclick="startJourney()">Start Sustainability Journey</button>
+ </div>
+</section>
+
+<section id="quiz" style="display:none">
+ <div class="container">
+  <h2>🌱 Climate Decision Journey</h2>
+  <div class="card mcq">
+   <p id="qText"></p>
+   <div id="options"></div>
+   <button class="skip-btn" onclick="skipQuestion()">Skip this Question</button>
+   <button class="skip-btn" onclick="skipAll()">Skip All</button>
+   <p id="progress" style="margin-top:20px;opacity:.7"></p>
+  </div>
+ </div>
+</section>
+
+<section id="result" style="display:none">
+ <div class="container">
+  <h2>🌍 Your Sustainability Impact</h2>
+  <div class="card">
+   <p id="summary"></p>
+   <h3 style="margin-top:20px">💚 Sustainability Score: <span id="score"></span>/100</h3>
+   <p id="level" style="margin-top:15px;font-size:1.1rem"></p>
+  </div>
+  <div class="card" style="margin-top:30px">
+   <h3>📰 Real Climate Evidence</h3>
+   <p>Your decisions reflect real-world outcomes supported by scientific reports:</p>
+   <a href="https://climate.nasa.gov/news/" target="_blank" style="color:var(--accent)">• NASA — Climate Change Evidence</a><br>
+   <a href="https://www.ipcc.ch/report/ar6/syr/" target="_blank" style="color:var(--accent)">• IPCC — Climate Impact Reports</a><br>
+   <a href="https://www.unep.org/news-and-stories" target="_blank" style="color:var(--accent)">• UNEP — Global Environmental News</a>
+  </div>
+ </div>
+</section>
+
+<footer>EcoPulse © 2025 • Sustainability Hackathon Project</footer>
+
+<script>
+const questions=[
+ {q:"🌡️ A heatwave increases electricity demand. You…",o:[["Use AC moderately",2],["Use AC occasionally",4],["Save power & plant shade trees",6]]},
+ {q:"🚗 Daily transport choice?",o:[["Drive occasionally",2],["Public transport",4],["Walk/Cycle",6]]},
+ {q:"💧 Water shortage warning issued. You…",o:[["Ignore",1],["Reduce use",4],["Harvest rainwater",6]]},
+ {q:"🌳 Trees are cut for development. You…",o:[["Do nothing",1],["Support replanting",4],["Protect & campaign",6]]},
+ {q:"🌾 Food waste at home…",o:[["Waste occasionally",1],["Plan meals",4],["Compost & donate",6]]},
+ {q:"⚡ Energy source preference?",o:[["Mixed energy",3],["Use partial solar",4],["Full Solar/Wind",6]]},
+ {q:"🛍️ Shopping habits?",o:[["Buy moderately",2],["Sustainable brands sometimes",4],["Always eco-friendly",6]]},
+ {q:"🌊 Plastic use?",o:[["Reduce occasionally",2],["Minimize use",4],["Zero-waste",6]]},
+ {q:"🏙️ City greenery planning?",o:[["Support small gardens",3],["Participate occasionally",4],["Promote green spaces",6]]},
+ {q:"📱 Device usage?",o:[["Moderate use",2],["Energy saving mode sometimes",4],["Always energy saving",6]]},
+ {q:"🚿 Shower habits?",o:[["Short showers",3],["Low-flow systems sometimes",4],["Always conserve water",6]]},
+ {q:"🌬️ Air quality alert?",o:[["Limit travel sometimes",2],["Reduce emissions when possible",4],["Advocate clean air",6]]},
+ {q:"🏭 Factory emissions nearby?",o:[["Report occasionally",3],["Community awareness",4],["Lead community action",6]]},
+ {q:"🌞 Rooftop usage?",o:[["Install partial solar",3],["Use solar occasionally",4],["Full solar installation",6]]},
+ {q:"🚮 Waste disposal?",o:[["Basic segregation",3],["Recycle occasionally",4],["Always recycle & compost",6]]},
+ {q:"🌱 Gardening choice?",o:[["Few plants",2],["Native plants sometimes",4],["Extensive native planting",6]]},
+ {q:"📦 Online deliveries?",o:[["Grouped orders",3],["Minimal packaging sometimes",4],["Minimal & eco-friendly packaging",6]]},
+ {q:"🌎 Climate education?",o:[["Learn basics",3],["Teach occasionally",4],["Educate others frequently",6]]},
+ {q:"🧠 Mental health care?",o:[["Occasional breaks",2],["Nature connection sometimes",4],["Regular nature connection",6]]},
+ {q:"🤝 Community action?",o:[["Occasional involvement",2],["Participate actively",4],["Lead initiatives",6]]}
+];
+
+let correctCount=0,attemptedCount=0,order=[],i=0;
+
+function startJourney(){
+ document.querySelector('.hero').style.display='none';
+ document.getElementById('quiz').style.display='block';
+ order=[...questions].sort(()=>Math.random()-0.5);
+ loadQ();
+}
+
+function loadQ(){
+ if(i>=order.length){showResult();return}
+ const q=order[i];
+ document.getElementById('qText').innerText=q.q;
+ document.getElementById('progress').innerText=`Question ${i+1} of ${order.length}`;
+ const o=document.getElementById('options');o.innerHTML='';
+ q.o.forEach(x=>{
+  const b=document.createElement('button');b.innerText=x[0];
+  b.onclick=()=>{
+    attemptedCount++;
+    if(x[1]>3) correctCount++; // consider highest points as correct
+    i++;loadQ();
+  };
+  o.appendChild(b);
+ });
+}
+
+function skipQuestion(){i++;loadQ();}
+function skipAll(){i=questions.length;loadQ();}
+
+function showResult(){
+ document.getElementById('quiz').style.display='none';
+ document.getElementById('result').style.display='block';
+ let score=Math.round((correctCount/attemptedCount)*100);
+ document.getElementById('score').innerText=score;
+ let level=score>75?"🌟 Climate Champion":score>55?"🌱 Sustainability-Friendly User":"⚠️ Needs Climate Awareness";
+ document.getElementById('level').innerText=level;
+ document.getElementById('summary').innerText=
+ score>75?
+ "Your choices show great care for the planet. Consistent sustainable actions can reduce emissions by millions of tonnes annually.":
+ score>55?
+ "You are developing a strong environmental conscience. With continued efforts, your impact will grow.":
+ "Awareness is growing. Even small changes can improve climate outcomes and personal well-being.";
+}
+</script>
+</body>
+</html>
